@@ -29,8 +29,9 @@ bool checkDots(std::string ip) {
     return true;
 }
 
-void parseIp(std::string ip) {
+IpAddress parseIp(std::string ip) {
     IpAddress result;
+
     int dotCount = 0;
 
     for (char symbol: ip) {
@@ -54,14 +55,15 @@ void parseIp(std::string ip) {
 
     }
 
+    return result;
 }
 
 bool checkSymbols(std::string ip) {
-    for (int i; i <= ip.length(); i++) {
+    for (int i = 0; i < ip.length(); i++) {
         if (!isdigit(ip[i]) && ip[i] != '.') {
             return false;
         }
-        if (ip[i] == '.' && ip[i+1] != '.') {
+        if (ip[i] == '0' && i + 1 <= ip.length() && ip[i + 1] == '0') {
             return false;
         }
     }
@@ -70,13 +72,18 @@ bool checkSymbols(std::string ip) {
 }
 
 bool checkParts(std::string str) {
-    IpAddress octet;
+    IpAddress octet = parseIp(str);
     int firstOctet = std::stoi(octet.firstSubnet);
     int secondOctet = std::stoi(octet.secondSubnet);
     int thirdOctet = std::stoi(octet.thirdSubnet);
     int fourthOctet = std::stoi(octet.fourthSubnet);
 
-    if (firstOctet >= 255 && secondOctet >= 255 && thirdOctet >= 255 && fourthOctet >= 255) {
+    if (octet.firstSubnet.empty() || octet.secondSubnet.empty() || octet.thirdSubnet.empty()
+        || octet.fourthSubnet.empty()) {
+        return false;
+    }
+
+    if (firstOctet > 255 || secondOctet > 255 || thirdOctet > 255 || fourthOctet > 255) {
         return false;
     }
 
@@ -89,6 +96,6 @@ int main() {
     std::cout << "Enter IP: " << std::endl;
     std::cin >> ip;
 
-    std::cout << checkSymbols(ip);
+    (checkSymbols(ip) && checkParts(ip) && checkDots(ip)) ? std::cout << "valid IP" : std::cout << "Invalid IP";
 
 }
