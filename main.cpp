@@ -56,10 +56,39 @@ void parseIp(std::string ip) {
 
 }
 
+bool checkSymbols(std::string ip) {
+    for (int i; i <= ip.length(); i++) {
+        if (!isdigit(ip[i]) && ip[i] != '.') {
+            return false;
+        }
+        if (ip[i] == '.' && ip[i+1] != '.') {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool checkParts(std::string str) {
+    IpAddress octet;
+    int firstOctet = std::stoi(octet.firstSubnet);
+    int secondOctet = std::stoi(octet.secondSubnet);
+    int thirdOctet = std::stoi(octet.thirdSubnet);
+    int fourthOctet = std::stoi(octet.fourthSubnet);
+
+    if (firstOctet >= 255 && secondOctet >= 255 && thirdOctet >= 255 && fourthOctet >= 255) {
+        return false;
+    }
+
+
+    return true;
+}
+
 int main() {
     std::string ip;
     std::cout << "Enter IP: " << std::endl;
     std::cin >> ip;
-    std::cout << checkDots(ip);
+
+    std::cout << checkSymbols(ip);
 
 }
